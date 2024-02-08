@@ -11,7 +11,6 @@ from itertools import combinations
 agents = ["A", "B", "C", "D", "E"]
 N = len(agents)
 
-
 # Define your characteristic function and input data
 def characteristic_function(players_contributions, synergies, coalition):
     """
