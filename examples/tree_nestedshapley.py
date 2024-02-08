@@ -34,6 +34,7 @@ def characteristic_function(players_contributions, synergies, coalition):
     for synergy_group, value in synergies.items():
         if all(player in synergy_group for player in coalition):
             if len(synergy_group) == len(coalition):
+                print(synergy_group, value)
                 total_value += value
                 break
 
@@ -68,13 +69,30 @@ def calculate_nested_tree(data, Ci, N_M):
 
     # Calculate Nested Shapley
 
-    shapley_node = get_shapley_node(Ci, A, VS, v)
-    nested_shapley_node = get_approx_shapley_node(Ci, shapley_node)
-    nested_shapley_agents = associate_shapley_agent(N_M=N_M, approx_shapley_node=nested_shapley_node)
+    nodal_shapley_node = get_shapley_node(Ci, A, VS, v)
+    corrected_shapley_node = get_approx_shapley_node(Ci, nodal_shapley_node)
+    nested_shapley_agents = associate_shapley_agent(N_M=N_M, approx_shapley_node=corrected_shapley_node)
     for i, agent in enumerate(agents):
         print(f"Agent {agent}: {nested_shapley_agents[i]}")
 
-    return shapley_node, nested_shapley_node, nested_shapley_agents
+    return nodal_shapley_node, corrected_shapley_node, nested_shapley_agents, v, A
+
+def print_S(A, agents):
+    order_S = []
+    for row in range(len(A)):
+        # obtain the coalition that correspond to row in A
+        # Important! make sure the list agents has the correct order as they appear in the tree
+        coalition_index = A[row]
+        coalition = list(element for element, index in zip(agents, coalition_index) if index == 1)
+        coalition.sort()
+        coalition = tuple(coalition)
+
+        order_S.append(coalition)
+
+    # Transform to an array
+    order_S = np.array(order_S, dtype=object)
+
+    return order_S
 
 #%% Ordered Tree 1
 # First, define the Ci matrix that indicates the parent and children nodes. Row=parent node, Column=children
@@ -104,7 +122,9 @@ N_M = get_NM_matrix(N_M_list)
 # The matrix VS indicates the combination of nodes that needs to be considered (row: combination, column: node)
 # The matrix A translates VS into the combination of agents based on the combination of nodes in VS (row: characteristic function, column: agent)
 
-shapley_node, nested_shapley_node, nested_shapley_agents = calculate_nested_tree(data, Ci, N_M)
+nodal_shapley_node, corrected_shapley_node, nested_shapley_agents, v, A = calculate_nested_tree(data, Ci, N_M)
+
+S = print_S(A, agents)
 
 #%% Ordered Tree 2
 # Same tree as 1 but with the agents in another order. In this case, the agents are still associated to the same nodes as in example 1
@@ -130,7 +150,9 @@ N_M_list = [[1,2,3,4,5],
             [3]]
 N_M = get_NM_matrix(N_M_list)
 
-shapley_node_2, nested_shapley_node_2, nested_shapley_agents_2 = calculate_nested_tree(data_2, Ci, N_M)
+nodal_shapley_node_2, corrected_shapley_node_2, nested_shapley_agents_2, v_2, A_2 = calculate_nested_tree(data_2, Ci, N_M)
+
+S = print_S(A_2, agents_)
 
 #%% Ordered tree 3
 # Same tree as previous examples, but agents are not associated to the same nodes
@@ -156,7 +178,9 @@ N_M_list = [[1,2,3,4,5],
             [3]]
 N_M = get_NM_matrix(N_M_list)
 
-shapley_node_3, nested_shapley_node_3, nested_shapley_agents_3 = calculate_nested_tree(data_3, Ci, N_M)
+nodal_shapley_node_3, corrected_shapley_node_3, nested_shapley_agents_3, v_3, A_3 = calculate_nested_tree(data_3, Ci, N_M)
+
+S = print_S(A_3, agents_)
 
 #%% Ordered tree 4
 # Different tree, associated by contribution
@@ -183,4 +207,6 @@ N_M_list = [[1,2,3,4,5],
             ]
 N_M = get_NM_matrix(N_M_list)
 
-shapley_node_4, nested_shapley_node_4, nested_shapley_agents_4 = calculate_nested_tree(data_4, Ci, N_M)
+nodal_shapley_node_4, corrected_shapley_node_4, nested_shapley_agents_4, v_4, A_4 = calculate_nested_tree(data_4, Ci, N_M)
+
+S = print_S(A_4, agents_)
