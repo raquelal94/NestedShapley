@@ -7,7 +7,7 @@ def CoalitionalStructure(number_Players):
     :param number_Players:
     :return: matrix number of combinations x n
     """
-
+    print("Hello")
     # create a Matrix with rows as possible number of combinations
     n=0
     for k in range(1, number_Players+1):
