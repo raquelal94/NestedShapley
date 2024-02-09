@@ -16,7 +16,7 @@ N = len(agents)
 def characteristic_function(players_contributions, synergies, coalition):
     """
     Calculate the total value of a coalition of players, considering individual contributions,
-    synergies, and penalties.
+    synergies.
 
     Parameters:
     - players_contributions: A dictionary where keys are player identifiers and values are their contributions.
